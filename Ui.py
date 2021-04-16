@@ -11,6 +11,7 @@ class Gui(Ui):
         pass
 
     def run(self):
+        print("Running GUI")
         pass
 
 class Terminal(Ui):
@@ -18,4 +19,5 @@ class Terminal(Ui):
         pass
 
     def run(self):
+        print("Running Terminal")
         pass
