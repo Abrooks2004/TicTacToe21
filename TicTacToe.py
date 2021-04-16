@@ -8,5 +8,6 @@ g : play with the GUI
 t : play with the Terminal""")
     quit()
 
+#does something idk i'm not smort
 if __name__ == "__main__":
     print("Hello world!")
