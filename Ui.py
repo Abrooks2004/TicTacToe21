@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Game import Game
+from Game import Game,GameError
 
 class Ui(ABC):
 
@@ -21,10 +21,23 @@ class Terminal(Ui):
     def run(self):
         while not self.__game.winner:
             print(self.__game)
-            row = int(input("Enter the row: "))
-            col = int(input("Enter the column"))
-            self.__game.play(row,col)
+            try:
+                row = int(input("Enter the row: "))
+                col = int(input("Enter the column"))
+            except TypeError:
+                print("Non numeric input")
+                continue
+                
+            if 1 <= row <= 3 and 1<= col <= 3:
+                try:
+                    self.__game.play(row,col)
+                except GameError:
+                    print("Invalid Location")
+            else:print("Row and column must be between the values of 1 and 3")
         
-        print(self._game)
-        w = self._game.winner
-        print(f"The winner was {w}")
+        if self.__game.winner == Game.DRAW:
+            print("The game was drawn")
+        else:
+            print(self.__game)
+            w = self.__game.winner
+            print(f"The winner was {w}")
