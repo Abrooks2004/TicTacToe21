@@ -25,3 +25,6 @@ class Terminal(Ui):
             col = int(input("Enter the column"))
             self.__game.play(row,col)
         
+        print(self._game)
+        w = self._game.winner
+        print(f"The winner was {w}")
