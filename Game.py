@@ -29,7 +29,7 @@ class Game:
         row -= 1
         col -= 1
         if self.__board[row][col] != Game.EMPTY:
-            raise GameError
+            raise GameError("Can't play here!")
         
         self.__board[row][col] = self.__player    
         self.__player = Game.P2 if self.__player is Game.P1 else Game.P1
