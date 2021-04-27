@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from Game import Game,GameError
-from tkinter import Button, Tk, Toplevel, Frame, X, StringVar, Text, Scrollbar, LEFT, RIGHT, Y, END, Grid, N, S, W, E
+from tkinter import Button, Tk, Toplevel, Frame, X, StringVar, Text, Scrollbar, LEFT, RIGHT, Y, END, Grid, N, S, W, E, Message
 from itertools import product
 
 class Ui(ABC):
@@ -41,26 +41,42 @@ class Gui(Ui):
         
         self.__root = root
         self.__console = console
-        
-    def _help_callback(self):
+        self.__inprogress = False
+    
+    def _get_help_content(self):
         with open("HelpDocuments.txt") as f:
-            txt = f.read() 
-        
-        self.__console.insert(END, f"{txt}\n")
+            text = f
+        return text
+    
+    def _help_callback(self):
+        help_win = Toplevel(self.__root)
+        help_win.title("Help")
+        help_text = self._get_help_content()
+        Message(help_win, text=help_text).pack(fill=X)        
+        Button(help_win, text="Dismiss", command=help_win.destroy).pack(fill=X)
+    
+    def _dismiss_game(self):
+        self.__inprogress = False
+        self.__game_win.destroy()
     
     def _play_callback(self):
+        if self.__inprogress:
+            return 
+        
+        self.__inprogress = True
+        self.__finished = False
         self.__game = Game()
         game_win = Toplevel(self.__root)
         game_win.title("Game")
         frame = Frame(game_win)
-
+        self.__game_win = game_win
         
         #Resizing
         Grid.columnconfigure(game_win,0,weight=1)
         Grid.rowconfigure(game_win,0,weight=1)
         frame.grid(row=0,column=0,sticky=N+S+W+E)
         
-        Button(game_win, text="Dismiss", command=game_win.destroy).grid(row=1,column=0)
+        Button(game_win, text="Dismiss", command=self._dismiss_game).grid(row=1,column=0)
         
         self.__buttons = [[None]*3 for _ in range(3)]
         
@@ -80,6 +96,9 @@ class Gui(Ui):
             
             
     def __play_and_refresh(self,row,col):
+        if self.__finished:
+            return
+        
         try:
             self.__game.play(row+1,col+1)
         except GameError as e:
@@ -91,6 +110,7 @@ class Gui(Ui):
                 
         w = self.__game.winner
         if w is not None:
+            self.__finished = True
             if w is Game.DRAW:
                 self.__console.insert(END, "The game was drawn\n")
             else:
